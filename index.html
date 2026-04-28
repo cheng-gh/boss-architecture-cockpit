@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boss Surprise, Architecture Cockpit</title>
+  <style>
+    :root {
+      --bg: #09111f;
+      --panel: #121b31;
+      --panel2: #192544;
+      --text: #eef4ff;
+      --muted: #9fb2d3;
+      --accent: #68e1ff;
+      --accent2: #7ff0b0;
+      --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, system-ui, sans-serif;
+      background: radial-gradient(circle at top right, rgba(104,225,255,0.12), transparent 30%), linear-gradient(160deg, #09111f, #101935 65%, #182141);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 1380px; margin: 0 auto; padding: 24px 18px 64px; }
+    .hero, .panel {
+      background: rgba(18,27,49,0.92);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.28);
+    }
+    .hero { padding: 28px; margin-bottom: 18px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; }
+    .mini { color: var(--muted); font-size: 0.9rem; }
+    h1, h2, h3 { margin: 0 0 10px; }
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.04; }
+    p, li { color: var(--muted); line-height: 1.55; }
+    .gradient {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .panel { padding: 20px; }
+    .span-6 { grid-column: span 6; }
+    .span-12 { grid-column: span 12; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+    .stat { border: 1px solid var(--border); background: rgba(255,255,255,0.04); padding: 14px; border-radius: 16px; }
+    .stat b { display: block; font-size: 1.3rem; color: var(--text); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: block; margin: 12px 0 8px; color: var(--muted); font-size: 0.92rem; }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      color: #07101f;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      margin-top: 14px;
+    }
+    button.secondary {
+      color: var(--text);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+      margin-left: 8px;
+    }
+    .output {
+      white-space: pre-wrap;
+      background: #0b1325;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 260px;
+      line-height: 1.56;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      overflow: auto;
+    }
+    .callout {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(104,225,255,0.08), rgba(127,240,176,0.04));
+      margin-top: 14px;
+    }
+    .footer { margin-top: 18px; color: var(--muted); font-size: 0.88rem; }
+    @media (max-width: 980px) {
+      .hero, .row { grid-template-columns: 1fr; }
+      .span-6, .span-12 { grid-column: span 12; }
+      .stats { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <div class="mini">Boss Surprise • static, local, useful</div>
+        <h1><span class="gradient">Architecture Cockpit</span><br />for microservices, agents, infra, and trade notes</h1>
+        <p>A self-contained browser tool for the exact kind of work Boss actually does. It turns blank-page architecture time into concrete plans, guardrails, checklists, and thesis notes.</p>
+        <div class="stats">
+          <div class="stat"><b>4</b><span>practical modules</span></div>
+          <div class="stat"><b>0</b><span>server dependencies</span></div>
+          <div class="stat"><b>1-click</b><span>Markdown export</span></div>
+          <div class="stat"><b>100%</b><span>client-side</span></div>
+        </div>
+      </div>
+      <div class="panel" style="margin:0; padding:18px;">
+        <h3>What it gives you fast</h3>
+        <ul>
+          <li>Legacy .NET API to .NET 9 extraction plan</li>
+          <li>AI orchestration spec with human checkpoints</li>
+          <li>Proxmox + Pi-hole quick audit card</li>
+          <li>Trade thesis journal for TSLA, PLTR, GOOGL, NFLX</li>
+        </ul>
+        <div class="callout">Useful surprise > decorative surprise. This one earns desk space.</div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel span-6">
+        <h2>1. Migration Planner</h2>
+        <div class="row">
+          <div>
+            <label>System name</label>
+            <input id="systemName" value="LegacySuite API" />
+          </div>
+          <div>
+            <label>Strategy</label>
+            <select id="migrationStyle">
+              <option>Strangler fig with façade</option>
+              <option>Domain-first extraction</option>
+              <option>ACL + parallel run</option>
+              <option>Modular monolith first</option>
+            </select>
+          </div>
+        </div>
+        <label>Bounded contexts, one per line</label>
+        <textarea id="contexts">Identity & Access
+Orders
+Catalog
+Billing
+Notifications
+Reporting</textarea>
+        <label>Constraints</label>
+        <textarea id="constraints">.NET 4.7.2 codebase, shared database, partial test coverage, incremental rollout required, observability needed from day one.</textarea>
+        <button onclick="generatePlan()">Generate</button>
+        <button class="secondary" onclick="copyOutput('planOutput')">Copy</button>
+      </div>
+      <div class="panel span-6">
+        <h2>Output</h2>
+        <div id="planOutput" class="output"></div>
+      </div>
+
+      <div class="panel span-6">
+        <h2>2. Agent Orchestration Spec</h2>
+        <label>Goal</label>
+        <input id="agentGoal" value="Convert legacy endpoints into reviewed .NET 9 service slices" />
+        <label>Roles, one per line</label>
+        <textarea id="roles">Repo analyst
+Architecture planner
+Code migrator
+Test author
+PR reviewer
+Deployment checker</textarea>
+        <label>Failure modes</label>
+        <textarea id="failures">Hallucinated repo structure
+Missing integration contracts
+Silent auth regression
+Too many concurrent agent writes
+Low-signal review output</textarea>
+        <button onclick="generateAgents()">Generate</button>
+        <button class="secondary" onclick="copyOutput('agentOutput')">Copy</button>
+      </div>
+      <div class="panel span-6">
+        <h2>Output</h2>
+        <div id="agentOutput" class="output"></div>
+      </div>
+
+      <div class="panel span-6">
+        <h2>3. Home Infra Audit Card</h2>
+        <div class="row">
+          <div>
+            <label>Hypervisor</label>
+            <input id="hypervisor" value="Proxmox" />
+          </div>
+          <div>
+            <label>DNS stack</label>
+            <input id="dns" value="Pi-hole with IPv6" />
+          </div>
+        </div>
+        <label>Pain points</label>
+        <textarea id="infraPain">Quick confidence checks after network changes, IPv6 DNS leak paranoia, backup hygiene, VM/container sprawl.</textarea>
+        <button onclick="generateInfra()">Generate</button>
+        <button class="secondary" onclick="copyOutput('infraOutput')">Copy</button>
+      </div>
+      <div class="panel span-6">
+        <h2>Output</h2>
+        <div id="infraOutput" class="output"></div>
+      </div>
+
+      <div class="panel span-6">
+        <h2>4. Tech Stock Thesis Card</h2>
+        <div class="row">
+          <div>
+            <label>Ticker</label>
+            <select id="ticker">
+              <option>TSLA</option>
+              <option>PLTR</option>
+              <option>GOOGL</option>
+              <option>NFLX</option>
+            </select>
+          </div>
+          <div>
+            <label>Bias</label>
+            <select id="bias">
+              <option>Long</option>
+              <option>Short-term tactical long</option>
+              <option>Wait for setup</option>
+              <option>Reduce risk</option>
+            </select>
+          </div>
+        </div>
+        <label>Setup notes</label>
+        <textarea id="setup">Breakout level, invalidation, catalyst, earnings proximity, options idea, and what would prove me wrong.</textarea>
+        <button onclick="generateStock()">Generate</button>
+        <button class="secondary" onclick="copyOutput('stockOutput')">Copy</button>
+      </div>
+      <div class="panel span-6">
+        <h2>Output</h2>
+        <div id="stockOutput" class="output"></div>
+      </div>
+
+      <div class="panel span-12">
+        <h2>Export</h2>
+        <p>Bundle all sections into one Markdown note for Obsidian, repo docs, issue planning, or future-you at 01:17.</p>
+        <button onclick="downloadMarkdown()">Download architecture-cockpit.md</button>
+        <div class="footer">One file, no backend, zero excuses.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function lines(id) {
+      return document.getElementById(id).value.split('\n').map(x => x.trim()).filter(Boolean);
+    }
+    function setOutput(id, text) {
+      document.getElementById(id).textContent = text;
+      localStorage.setItem(id, text);
+    }
+    function copyOutput(id) {
+      navigator.clipboard.writeText(document.getElementById(id).textContent || '');
+    }
+    function generatePlan() {
+      const system = document.getElementById('systemName').value.trim();
+      const strategy = document.getElementById('migrationStyle').value;
+      const contexts = lines('contexts');
+      const constraints = document.getElementById('constraints').value.trim();
+      const wave1 = contexts.slice(0, 2);
+      const wave2 = contexts.slice(2, 4);
+      const wave3 = contexts.slice(4);
+      const text = `# ${system} migration plan\n\nStrategy: ${strategy}\n\n## Recommended sequence\n1. Put a façade at the API edge and add correlation IDs, health checks, and tracing first\n2. Extract the lowest-coupling first wave: ${wave1.join(', ') || 'TBD'}\n3. Tolerate shared-db reads early, but isolate writes behind new service contracts\n4. Add contract tests before each traffic shift\n\n## Waves\n- Wave 1: ${wave1.join(', ') || 'TBD'}\n- Wave 2: ${wave2.join(', ') || 'TBD'}\n- Wave 3: ${wave3.join(', ') || 'TBD'}\n\n## Service baseline\n- .NET 9 service template\n- OpenTelemetry + structured logs\n- Health/readiness endpoints\n- Versioned contracts\n- Feature-flagged cutover\n\n## Constraints\n${constraints}\n\n## First backlog slice\n1. Endpoint inventory by bounded context\n2. Façade routing for wave 1\n3. Contract test harness\n4. Rollback path definition\n5. Auth regression checks`;
+      setOutput('planOutput', text);
+    }
+    function generateAgents() {
+      const goal = document.getElementById('agentGoal').value.trim();
+      const roles = lines('roles');
+      const failures = lines('failures');
+      const text = `# Agent orchestration blueprint\n\nGoal: ${goal}\n\n## Flow\n1. ${roles[0] || 'Lead agent'} scans repo structure and contracts\n2. ${roles[1] || 'Planner'} defines scope and writes the slice plan\n3. ${roles[2] || 'Migrator'} edits code for one slice only\n4. ${roles[3] || 'Tester'} adds tests and contract coverage\n5. ${roles[4] || 'Reviewer'} checks auth, config, and observability\n6. ${roles[5] || 'Deployer'} validates rollout notes\n\n## Guardrails\n- One writer agent per branch\n- Require markdown handoff between agents\n- Freeze public contract assumptions before code generation\n- Reject infra creep without justification\n\n## Failure modes\n${failures.map(x => '- ' + x).join('\n')}\n\n## Human checkpoints\n- Approve service boundary\n- Approve contract changes\n- Approve rollout when auth or data ownership changes`;
+      setOutput('agentOutput', text);
+    }
+    function generateInfra() {
+      const hypervisor = document.getElementById('hypervisor').value.trim();
+      const dns = document.getElementById('dns').value.trim();
+      const pain = document.getElementById('infraPain').value.trim();
+      const text = `# Home infra audit card\n\nStack: ${hypervisor} + ${dns}\n\n## 10-minute check\n1. Node health, storage headroom, backup status\n2. Top CPU and RAM consumers\n3. DNS over IPv4 and IPv6 through Pi-hole\n4. Query spikes, blocklist anomalies, upstream health\n5. Router or DHCP still points clients at Pi-hole\n6. External DNS leak check from one client\n7. Snapshot and backup retention sanity\n8. Stale VMs, stopped containers, orphaned disks\n\n## Watch list\n- IPv6 bypass\n- Silent backup failure\n- VM sprawl\n- Surprise resource contention\n\n## Current pain points\n${pain}`;
+      setOutput('infraOutput', text);
+    }
+    function generateStock() {
+      const ticker = document.getElementById('ticker').value;
+      const bias = document.getElementById('bias').value;
+      const setup = document.getElementById('setup').value.trim();
+      const text = `# ${ticker} thesis card\n\nBias: ${bias}\n\n## Setup\n${setup}\n\n## Checklist\n- Trend direction on daily and weekly\n- Support and resistance marked\n- Catalyst calendar checked\n- Position size defined before entry\n- Invalidation written down\n- If options: max pain accepted before click\n\n## Post-trade journal\n- What triggered entry\n- What almost talked me out of it\n- What would make me add, trim, or exit\n- What I learned`;
+      setOutput('stockOutput', text);
+    }
+    function downloadMarkdown() {
+      const content = [
+        '# Architecture Cockpit Export',
+        '',
+        document.getElementById('planOutput').textContent || '(generate plan first)',
+        '',
+        document.getElementById('agentOutput').textContent || '(generate agent spec first)',
+        '',
+        document.getElementById('infraOutput').textContent || '(generate infra audit first)',
+        '',
+        document.getElementById('stockOutput').textContent || '(generate stock thesis first)'
+      ].join('\n');
+      const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'architecture-cockpit.md';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    ['planOutput','agentOutput','infraOutput','stockOutput'].forEach(id => {
+      const saved = localStorage.getItem(id);
+      if (saved) document.getElementById(id).textContent = saved;
+    });
+    generatePlan();
+    generateAgents();
+    generateInfra();
+    generateStock();
+  </script>
+</body>
+</html>
