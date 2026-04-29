@@ -1,7 +1,12 @@
-# Boss Architecture Cockpit
+# Boss Mission Control
 
-Static one-file browser tool for:
-- .NET 4.7.2 -> .NET 9 migration planning
-- AI orchestration blueprints
-- Proxmox + Pi-hole audit checklists
-- TSLA / PLTR / GOOGL / NFLX thesis cards
+A static browser cockpit built for Boss.
+
+Live URL: https://cheng-gh.github.io/boss-architecture-cockpit/
+
+Modules:
+- .NET modernization planner
+- extraction scorecard
+- AI orchestration blueprint
+- Proxmox + Pi-hole audit card
+- tech stock thesis journal

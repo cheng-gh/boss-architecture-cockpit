@@ -3,52 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boss Surprise, Architecture Cockpit</title>
+  <title>Boss Mission Control</title>
   <style>
     :root {
       --bg: #09111f;
-      --panel: #121b31;
-      --panel2: #192544;
+      --panel: rgba(18,27,49,0.92);
       --text: #eef4ff;
       --muted: #9fb2d3;
       --accent: #68e1ff;
       --accent2: #7ff0b0;
+      --warn: #ffc857;
+      --danger: #ff7b7b;
       --border: rgba(255,255,255,0.08);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Inter, Segoe UI, system-ui, sans-serif;
-      background: radial-gradient(circle at top right, rgba(104,225,255,0.12), transparent 30%), linear-gradient(160deg, #09111f, #101935 65%, #182141);
-      color: var(--text);
       min-height: 100vh;
+      font-family: Inter, Segoe UI, system-ui, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top right, rgba(104,225,255,0.12), transparent 30%), linear-gradient(160deg, #09111f, #101935 65%, #182141);
     }
-    .wrap { max-width: 1380px; margin: 0 auto; padding: 24px 18px 64px; }
+    .wrap { max-width: 1440px; margin: 0 auto; padding: 24px 18px 64px; }
     .hero, .panel {
-      background: rgba(18,27,49,0.92);
+      background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 22px;
       box-shadow: 0 16px 50px rgba(0,0,0,0.28);
     }
-    .hero { padding: 28px; margin-bottom: 18px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; }
+    .hero {
+      padding: 28px;
+      margin-bottom: 18px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 18px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .panel { padding: 20px; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
     .mini { color: var(--muted); font-size: 0.9rem; }
-    h1, h2, h3 { margin: 0 0 10px; }
-    h1 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.04; }
+    h1,h2,h3 { margin: 0 0 10px; }
+    h1 { font-size: clamp(2rem, 4vw, 3.35rem); line-height: 1.03; }
     p, li { color: var(--muted); line-height: 1.55; }
     .gradient {
       background: linear-gradient(90deg, var(--accent), var(--accent2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
-    .panel { padding: 20px; }
-    .span-6 { grid-column: span 6; }
-    .span-12 { grid-column: span 12; }
     .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
-    .stat { border: 1px solid var(--border); background: rgba(255,255,255,0.04); padding: 14px; border-radius: 16px; }
-    .stat b { display: block; font-size: 1.3rem; color: var(--text); }
+    .stat, .score {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      padding: 14px;
+      border-radius: 16px;
+    }
+    .stat b, .score b { display:block; font-size: 1.25rem; color: var(--text); }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    label { display: block; margin: 12px 0 8px; color: var(--muted); font-size: 0.92rem; }
+    label { display:block; margin: 12px 0 8px; color: var(--muted); font-size: 0.92rem; }
     input, textarea, select {
       width: 100%;
       border: 1px solid var(--border);
@@ -94,11 +110,15 @@
       background: linear-gradient(180deg, rgba(104,225,255,0.08), rgba(127,240,176,0.04));
       margin-top: 14px;
     }
+    .score-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-top: 14px; }
+    .risk-high { color: var(--danger); }
+    .risk-med { color: var(--warn); }
+    .risk-low { color: var(--accent2); }
     .footer { margin-top: 18px; color: var(--muted); font-size: 0.88rem; }
     @media (max-width: 980px) {
       .hero, .row { grid-template-columns: 1fr; }
-      .span-6, .span-12 { grid-column: span 12; }
-      .stats { grid-template-columns: 1fr 1fr; }
+      .span-4, .span-5, .span-6, .span-7, .span-8, .span-12 { grid-column: span 12; }
+      .stats, .score-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -106,76 +126,109 @@
   <div class="wrap">
     <section class="hero">
       <div>
-        <div class="mini">Boss Surprise • static, local, useful</div>
-        <h1><span class="gradient">Architecture Cockpit</span><br />for microservices, agents, infra, and trade notes</h1>
-        <p>A self-contained browser tool for the exact kind of work Boss actually does. It turns blank-page architecture time into concrete plans, guardrails, checklists, and thesis notes.</p>
+        <div class="mini">Built for Boss • software architect mode, no fluff edition</div>
+        <h1><span class="gradient">Mission Control</span><br />for modernization, agents, infra, and conviction</h1>
+        <p>A static browser cockpit tuned for the actual work Boss does: breaking legacy .NET 4.7.2 APIs into sane .NET 9 slices, designing agent workflows that do not go feral, keeping Proxmox + Pi-hole honest, and writing down trading logic before the market humbles everyone.</p>
         <div class="stats">
-          <div class="stat"><b>4</b><span>practical modules</span></div>
+          <div class="stat"><b>5</b><span>practical modules</span></div>
           <div class="stat"><b>0</b><span>server dependencies</span></div>
           <div class="stat"><b>1-click</b><span>Markdown export</span></div>
-          <div class="stat"><b>100%</b><span>client-side</span></div>
+          <div class="stat"><b>100%</b><span>client-side + persistent</span></div>
         </div>
       </div>
       <div class="panel" style="margin:0; padding:18px;">
-        <h3>What it gives you fast</h3>
+        <h3>What it helps with fast</h3>
         <ul>
-          <li>Legacy .NET API to .NET 9 extraction plan</li>
-          <li>AI orchestration spec with human checkpoints</li>
-          <li>Proxmox + Pi-hole quick audit card</li>
-          <li>Trade thesis journal for TSLA, PLTR, GOOGL, NFLX</li>
+          <li>Plan a phased legacy API to .NET 9 migration</li>
+          <li>Score which bounded context should be extracted first</li>
+          <li>Generate an AI orchestration spec with guardrails</li>
+          <li>Run a Proxmox + Pi-hole confidence audit</li>
+          <li>Capture a TSLA / PLTR / GOOGL / NFLX thesis before clicking buy</li>
         </ul>
-        <div class="callout">Useful surprise > decorative surprise. This one earns desk space.</div>
+        <div class="callout">Useful surprise &gt; decorative surprise. This one earns a bookmark.</div>
       </div>
     </section>
 
     <section class="grid">
-      <div class="panel span-6">
-        <h2>1. Migration Planner</h2>
+      <div class="panel span-7">
+        <h2>1. Modernization Planner</h2>
         <div class="row">
           <div>
             <label>System name</label>
-            <input id="systemName" value="LegacySuite API" />
+            <input id="systemName" data-persist value="LegacySuite API" />
           </div>
           <div>
             <label>Strategy</label>
-            <select id="migrationStyle">
+            <select id="migrationStyle" data-persist>
               <option>Strangler fig with façade</option>
               <option>Domain-first extraction</option>
-              <option>ACL + parallel run</option>
+              <option>Anti-corruption layer + parallel run</option>
               <option>Modular monolith first</option>
             </select>
           </div>
         </div>
         <label>Bounded contexts, one per line</label>
-        <textarea id="contexts">Identity & Access
+        <textarea id="contexts" data-persist>Identity & Access
 Orders
 Catalog
 Billing
 Notifications
 Reporting</textarea>
-        <label>Constraints</label>
-        <textarea id="constraints">.NET 4.7.2 codebase, shared database, partial test coverage, incremental rollout required, observability needed from day one.</textarea>
+        <label>Constraints / ugly realities</label>
+        <textarea id="constraints" data-persist>.NET 4.7.2 codebase, shared database, partial test coverage, incremental rollout required, observability needed from day one.</textarea>
         <button onclick="generatePlan()">Generate</button>
         <button class="secondary" onclick="copyOutput('planOutput')">Copy</button>
       </div>
-      <div class="panel span-6">
+      <div class="panel span-5">
         <h2>Output</h2>
         <div id="planOutput" class="output"></div>
       </div>
 
+      <div class="panel span-8">
+        <h2>2. Extraction Scorecard</h2>
+        <p>Score one candidate slice before you let vibes choose architecture.</p>
+        <div class="row">
+          <div>
+            <label>Candidate slice</label>
+            <input id="sliceName" data-persist value="Notifications" />
+          </div>
+          <div>
+            <label>Primary integration style</label>
+            <select id="integrationStyle" data-persist>
+              <option>HTTP sync</option>
+              <option>Async events</option>
+              <option>Shared DB transitional</option>
+              <option>Batch / scheduled</option>
+            </select>
+          </div>
+        </div>
+        <div class="score-grid">
+          <div class="score"><label>Coupling (1 low, 5 ugly)</label><input id="coupling" data-persist type="number" min="1" max="5" value="2" /></div>
+          <div class="score"><label>Business value</label><input id="value" data-persist type="number" min="1" max="5" value="4" /></div>
+          <div class="score"><label>Testability</label><input id="testability" data-persist type="number" min="1" max="5" value="4" /></div>
+          <div class="score"><label>Blast radius</label><input id="blast" data-persist type="number" min="1" max="5" value="2" /></div>
+        </div>
+        <button onclick="scoreSlice()">Score candidate</button>
+        <button class="secondary" onclick="copyOutput('sliceOutput')">Copy</button>
+      </div>
+      <div class="panel span-4">
+        <h2>Output</h2>
+        <div id="sliceOutput" class="output"></div>
+      </div>
+
       <div class="panel span-6">
-        <h2>2. Agent Orchestration Spec</h2>
+        <h2>3. Agent Orchestration Spec</h2>
         <label>Goal</label>
-        <input id="agentGoal" value="Convert legacy endpoints into reviewed .NET 9 service slices" />
+        <input id="agentGoal" data-persist value="Convert legacy endpoints into reviewed .NET 9 microservice slices" />
         <label>Roles, one per line</label>
-        <textarea id="roles">Repo analyst
+        <textarea id="roles" data-persist>Repo analyst
 Architecture planner
 Code migrator
 Test author
 PR reviewer
 Deployment checker</textarea>
         <label>Failure modes</label>
-        <textarea id="failures">Hallucinated repo structure
+        <textarea id="failures" data-persist>Hallucinated repo structure
 Missing integration contracts
 Silent auth regression
 Too many concurrent agent writes
@@ -189,19 +242,19 @@ Low-signal review output</textarea>
       </div>
 
       <div class="panel span-6">
-        <h2>3. Home Infra Audit Card</h2>
+        <h2>4. Home Infra Audit Card</h2>
         <div class="row">
           <div>
             <label>Hypervisor</label>
-            <input id="hypervisor" value="Proxmox" />
+            <input id="hypervisor" data-persist value="Proxmox" />
           </div>
           <div>
             <label>DNS stack</label>
-            <input id="dns" value="Pi-hole with IPv6" />
+            <input id="dns" data-persist value="Pi-hole with IPv6" />
           </div>
         </div>
         <label>Pain points</label>
-        <textarea id="infraPain">Quick confidence checks after network changes, IPv6 DNS leak paranoia, backup hygiene, VM/container sprawl.</textarea>
+        <textarea id="infraPain" data-persist>Quick confidence checks after network changes, IPv6 DNS leak paranoia, backup hygiene, VM/container sprawl.</textarea>
         <button onclick="generateInfra()">Generate</button>
         <button class="secondary" onclick="copyOutput('infraOutput')">Copy</button>
       </div>
@@ -211,11 +264,11 @@ Low-signal review output</textarea>
       </div>
 
       <div class="panel span-6">
-        <h2>4. Tech Stock Thesis Card</h2>
+        <h2>5. Tech Stock Thesis Card</h2>
         <div class="row">
           <div>
             <label>Ticker</label>
-            <select id="ticker">
+            <select id="ticker" data-persist>
               <option>TSLA</option>
               <option>PLTR</option>
               <option>GOOGL</option>
@@ -224,7 +277,7 @@ Low-signal review output</textarea>
           </div>
           <div>
             <label>Bias</label>
-            <select id="bias">
+            <select id="bias" data-persist>
               <option>Long</option>
               <option>Short-term tactical long</option>
               <option>Wait for setup</option>
@@ -233,7 +286,7 @@ Low-signal review output</textarea>
           </div>
         </div>
         <label>Setup notes</label>
-        <textarea id="setup">Breakout level, invalidation, catalyst, earnings proximity, options idea, and what would prove me wrong.</textarea>
+        <textarea id="setup" data-persist>Breakout level, invalidation, catalyst, earnings proximity, options idea, and what would prove me wrong.</textarea>
         <button onclick="generateStock()">Generate</button>
         <button class="secondary" onclick="copyOutput('stockOutput')">Copy</button>
       </div>
@@ -244,23 +297,42 @@ Low-signal review output</textarea>
 
       <div class="panel span-12">
         <h2>Export</h2>
-        <p>Bundle all sections into one Markdown note for Obsidian, repo docs, issue planning, or future-you at 01:17.</p>
-        <button onclick="downloadMarkdown()">Download architecture-cockpit.md</button>
-        <div class="footer">One file, no backend, zero excuses.</div>
+        <p>Bundle everything into one Markdown file for Obsidian, ADR drafts, issue planning, repo notes, or future-you after a late-night architecture detour.</p>
+        <button onclick="downloadMarkdown()">Download boss-mission-control.md</button>
+        <div class="footer">Static page, local persistence, zero backend drama. A rare case where "it depends" is not the only architecture answer.</div>
       </div>
     </section>
   </div>
 
   <script>
+    const idsToPersist = [...document.querySelectorAll('[data-persist]')].map(x => x.id);
+    function saveValue(id) { localStorage.setItem('boss-mc:' + id, document.getElementById(id).value); }
+    function loadValue(id) {
+      const el = document.getElementById(id);
+      const saved = localStorage.getItem('boss-mc:' + id);
+      if (saved !== null) el.value = saved;
+      el.addEventListener('input', () => saveValue(id));
+      el.addEventListener('change', () => saveValue(id));
+    }
+    idsToPersist.forEach(loadValue);
+
     function lines(id) {
       return document.getElementById(id).value.split('\n').map(x => x.trim()).filter(Boolean);
     }
     function setOutput(id, text) {
       document.getElementById(id).textContent = text;
-      localStorage.setItem(id, text);
+      localStorage.setItem('boss-mc:' + id, text);
+    }
+    function getOutput(id) {
+      return document.getElementById(id).textContent || localStorage.getItem('boss-mc:' + id) || '';
     }
     function copyOutput(id) {
-      navigator.clipboard.writeText(document.getElementById(id).textContent || '');
+      navigator.clipboard.writeText(getOutput(id));
+    }
+    function riskLabel(score) {
+      if (score >= 8) return 'HIGH';
+      if (score >= 5) return 'MEDIUM';
+      return 'LOW';
     }
     function generatePlan() {
       const system = document.getElementById('systemName').value.trim();
@@ -270,55 +342,71 @@ Low-signal review output</textarea>
       const wave1 = contexts.slice(0, 2);
       const wave2 = contexts.slice(2, 4);
       const wave3 = contexts.slice(4);
-      const text = `# ${system} migration plan\n\nStrategy: ${strategy}\n\n## Recommended sequence\n1. Put a façade at the API edge and add correlation IDs, health checks, and tracing first\n2. Extract the lowest-coupling first wave: ${wave1.join(', ') || 'TBD'}\n3. Tolerate shared-db reads early, but isolate writes behind new service contracts\n4. Add contract tests before each traffic shift\n\n## Waves\n- Wave 1: ${wave1.join(', ') || 'TBD'}\n- Wave 2: ${wave2.join(', ') || 'TBD'}\n- Wave 3: ${wave3.join(', ') || 'TBD'}\n\n## Service baseline\n- .NET 9 service template\n- OpenTelemetry + structured logs\n- Health/readiness endpoints\n- Versioned contracts\n- Feature-flagged cutover\n\n## Constraints\n${constraints}\n\n## First backlog slice\n1. Endpoint inventory by bounded context\n2. Façade routing for wave 1\n3. Contract test harness\n4. Rollback path definition\n5. Auth regression checks`;
+      const score = [constraints.includes('shared database') ? 2 : 0, constraints.includes('partial test coverage') ? 2 : 0, contexts.length > 5 ? 2 : 1, strategy.includes('parallel') ? 1 : 2].reduce((a,b) => a+b, 0);
+      const text = `# ${system} modernization plan\n\nStrategy: ${strategy}\nRisk level: ${riskLabel(score)}\n\n## Recommended sequence\n1. Put a façade at the API edge and add correlation IDs, health checks, tracing, and error baselines before extraction.\n2. Extract the lowest-coupling first wave: ${wave1.join(', ') || 'TBD'}.\n3. Tolerate shared-db reads early, but isolate writes behind new service contracts so the monolith stops being everyone's emotional support database.\n4. Add contract tests before each traffic shift.\n\n## Waves\n- Wave 1: ${wave1.join(', ') || 'TBD'}\n- Wave 2: ${wave2.join(', ') || 'TBD'}\n- Wave 3: ${wave3.join(', ') || 'TBD'}\n\n## .NET 9 baseline\n- Thin HTTP edge + explicit contracts\n- OpenTelemetry + structured logs from day one\n- Health/readiness endpoints\n- Feature-flagged cutover\n- Repeatable Docker build and env-specific config\n\n## Constraints\n${constraints}\n\n## First backlog slice\n1. Endpoint inventory by bounded context\n2. Façade routing for wave 1\n3. Contract test harness\n4. Rollback path definition\n5. Auth + config regression checks\n6. Latency/error baseline before cutover`;
       setOutput('planOutput', text);
+    }
+    function scoreSlice() {
+      const name = document.getElementById('sliceName').value.trim();
+      const coupling = Number(document.getElementById('coupling').value || 0);
+      const value = Number(document.getElementById('value').value || 0);
+      const testability = Number(document.getElementById('testability').value || 0);
+      const blast = Number(document.getElementById('blast').value || 0);
+      const integration = document.getElementById('integrationStyle').value;
+      const score = (value * 3) + (testability * 2) + ((6 - coupling) * 2) + (6 - blast);
+      const verdict = score >= 28 ? 'Excellent first extraction candidate' : score >= 22 ? 'Viable candidate with manageable risk' : 'Probably not first-wave material';
+      const text = `# ${name} extraction scorecard\n\nIntegration: ${integration}\nWeighted score: ${score}/40\nVerdict: ${verdict}\n\n## Inputs\n- Coupling: ${coupling}/5\n- Business value: ${value}/5\n- Testability: ${testability}/5\n- Blast radius: ${blast}/5\n\n## Recommendation\n${score >= 28 ? 'Take it early. It is valuable, teachable, and unlikely to detonate production on contact.' : score >= 22 ? 'Reasonable second pick. Reduce coupling or add tests before making it the first hero slice.' : 'Keep it out of wave 1 unless there is a brutal business reason. Pick something cleaner first.'}\n\n## Next move\n- Freeze contracts\n- Identify write ownership\n- Define rollback path\n- Add observability before cutover`;
+      setOutput('sliceOutput', text);
     }
     function generateAgents() {
       const goal = document.getElementById('agentGoal').value.trim();
       const roles = lines('roles');
       const failures = lines('failures');
-      const text = `# Agent orchestration blueprint\n\nGoal: ${goal}\n\n## Flow\n1. ${roles[0] || 'Lead agent'} scans repo structure and contracts\n2. ${roles[1] || 'Planner'} defines scope and writes the slice plan\n3. ${roles[2] || 'Migrator'} edits code for one slice only\n4. ${roles[3] || 'Tester'} adds tests and contract coverage\n5. ${roles[4] || 'Reviewer'} checks auth, config, and observability\n6. ${roles[5] || 'Deployer'} validates rollout notes\n\n## Guardrails\n- One writer agent per branch\n- Require markdown handoff between agents\n- Freeze public contract assumptions before code generation\n- Reject infra creep without justification\n\n## Failure modes\n${failures.map(x => '- ' + x).join('\n')}\n\n## Human checkpoints\n- Approve service boundary\n- Approve contract changes\n- Approve rollout when auth or data ownership changes`;
+      const text = `# Agent orchestration blueprint\n\nGoal: ${goal}\n\n## Flow\n1. ${roles[0] || 'Lead agent'} scans repo structure and contracts\n2. ${roles[1] || 'Planner'} defines scope and writes the slice plan\n3. ${roles[2] || 'Migrator'} edits code for one slice only\n4. ${roles[3] || 'Tester'} adds tests and contract coverage\n5. ${roles[4] || 'Reviewer'} checks auth, config, and observability\n6. ${roles[5] || 'Deployer'} validates rollout notes\n\n## Guardrails\n- One writer agent per branch\n- Require markdown handoff between agents\n- Freeze public contract assumptions before code generation\n- Reject infra creep without justification\n- Human approval for auth, data ownership, and public contract changes\n\n## Failure modes\n${failures.map(x => '- ' + x).join('\n')}\n\n## Definition of done\n- Build passes\n- Tests cover changed behavior\n- Rollback exists\n- PR explains legacy dependency leftovers\n- Observability hooks exist before traffic shift`;
       setOutput('agentOutput', text);
     }
     function generateInfra() {
       const hypervisor = document.getElementById('hypervisor').value.trim();
       const dns = document.getElementById('dns').value.trim();
       const pain = document.getElementById('infraPain').value.trim();
-      const text = `# Home infra audit card\n\nStack: ${hypervisor} + ${dns}\n\n## 10-minute check\n1. Node health, storage headroom, backup status\n2. Top CPU and RAM consumers\n3. DNS over IPv4 and IPv6 through Pi-hole\n4. Query spikes, blocklist anomalies, upstream health\n5. Router or DHCP still points clients at Pi-hole\n6. External DNS leak check from one client\n7. Snapshot and backup retention sanity\n8. Stale VMs, stopped containers, orphaned disks\n\n## Watch list\n- IPv6 bypass\n- Silent backup failure\n- VM sprawl\n- Surprise resource contention\n\n## Current pain points\n${pain}`;
+      const text = `# Home infra audit card\n\nStack: ${hypervisor} + ${dns}\n\n## 10-minute confidence check\n1. Node health, storage headroom, backup status\n2. Top CPU and RAM consumers across VMs/containers\n3. DNS over IPv4 and IPv6 through Pi-hole\n4. Query spikes, blocklist anomalies, upstream health\n5. Router or DHCP still points clients at Pi-hole\n6. External DNS leak check from one client\n7. Snapshot and backup retention sanity\n8. Stale VMs, stopped containers, orphaned disks\n9. Certificate expiry for internal dashboards/reverse proxies\n10. Write down weirdness before future-you has to do archaeology\n\n## Watch list\n- IPv6 bypass\n- Silent backup failure\n- VM sprawl\n- Surprise resource contention\n\n## Current pain points\n${pain}`;
       setOutput('infraOutput', text);
     }
     function generateStock() {
       const ticker = document.getElementById('ticker').value;
       const bias = document.getElementById('bias').value;
       const setup = document.getElementById('setup').value.trim();
-      const text = `# ${ticker} thesis card\n\nBias: ${bias}\n\n## Setup\n${setup}\n\n## Checklist\n- Trend direction on daily and weekly\n- Support and resistance marked\n- Catalyst calendar checked\n- Position size defined before entry\n- Invalidation written down\n- If options: max pain accepted before click\n\n## Post-trade journal\n- What triggered entry\n- What almost talked me out of it\n- What would make me add, trim, or exit\n- What I learned`;
+      const text = `# ${ticker} thesis card\n\nBias: ${bias}\n\n## Setup\n${setup}\n\n## Checklist\n- Trend direction on daily and weekly\n- Support and resistance marked\n- Catalyst calendar checked\n- Position size defined before entry\n- Invalidation written down\n- If options: max pain accepted before clicking\n\n## Post-trade journal\n- What triggered entry\n- What almost talked me out of it\n- What would make me add, trim, or exit\n- What I learned`;
       setOutput('stockOutput', text);
     }
     function downloadMarkdown() {
       const content = [
-        '# Architecture Cockpit Export',
+        '# Boss Mission Control Export',
         '',
-        document.getElementById('planOutput').textContent || '(generate plan first)',
+        getOutput('planOutput') || '(generate modernization plan first)',
         '',
-        document.getElementById('agentOutput').textContent || '(generate agent spec first)',
+        getOutput('sliceOutput') || '(generate extraction scorecard first)',
         '',
-        document.getElementById('infraOutput').textContent || '(generate infra audit first)',
+        getOutput('agentOutput') || '(generate orchestration spec first)',
         '',
-        document.getElementById('stockOutput').textContent || '(generate stock thesis first)'
+        getOutput('infraOutput') || '(generate infra audit first)',
+        '',
+        getOutput('stockOutput') || '(generate thesis card first)'
       ].join('\n');
       const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'architecture-cockpit.md';
+      a.download = 'boss-mission-control.md';
       a.click();
       URL.revokeObjectURL(url);
     }
-    ['planOutput','agentOutput','infraOutput','stockOutput'].forEach(id => {
-      const saved = localStorage.getItem(id);
+    ['planOutput','sliceOutput','agentOutput','infraOutput','stockOutput'].forEach(id => {
+      const saved = localStorage.getItem('boss-mc:' + id);
       if (saved) document.getElementById(id).textContent = saved;
     });
     generatePlan();
+    scoreSlice();
     generateAgents();
     generateInfra();
     generateStock();
